@@ -1,22 +1,21 @@
 import random
 import pygame
-#import funkcje
+import funkcje
 import klasy
 
-black = (0, 0, 0)
-white = (255, 255, 255)
-red = (255, 0, 0)
-astr_c = (127, 235, 137)
-green = (0, 255, 0)
-hud = (63, 52, 130)
+black,white,red,astr_c,green,hud = funkcje.kolory()
 
 block_list = pygame.sprite.Group()
 all_spr = pygame.sprite.Group()
 pociski = pygame.sprite.Group()
+collision = pygame.sprite.Group()
+player_group = pygame.sprite.Group()
+
+
 
 
 def main():
-
+    hud_height = 58
     zycia = 3
     pygame.init()
 
@@ -29,8 +28,7 @@ def main():
     pygame.mouse.set_visible(False)
 
     #okno
-    screen_width = 800
-    screen_height = 600
+    screen_width, screen_height = funkcje.screen()
     screen = pygame.display.set_mode([screen_width, screen_height])
     pygame.display.set_caption("Gra")
     #koniec okna
@@ -42,33 +40,29 @@ def main():
 
 
    #ASTEROIDY
-
     asteroid = klasy.Asteroid()
-    asteroid.rect.x = 300
-    asteroid.rect.y = screen_height/2
+    asteroid.rect.x = screen_width + 20
+    asteroid.rect.y = 20
     block_list.add(asteroid)
     all_spr.add(asteroid)
 
-
-
-
     asteroidy = []
-    for i in range(10):
+    for i in range(50):
         asteroida = klasy.Asteroid()
         asteroida.rect.x = asteroid.rect.x + 50
-        asteroida.rect.y =  300
+        asteroida.rect.y = 20
         block_list.add(asteroida)
         all_spr.add(asteroida)
         asteroidy.append(asteroida)
         asteroid.rect.x += 40
 
-    asteroidy[5].rect.y=100
+    asteroidy[5].rect.y = 100
 
     #KONIEC
 
 #stworzenie gracza
     player = klasy.Player()
-    all_spr.add(player)
+    player_group.add(player)
 
 #gwazdy
     star = [] #pojemnik
@@ -85,28 +79,45 @@ def main():
 
     done = True
     score = 0
-#-------main loop-------#
+#-------main loop-------#n
     while done:
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 done = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
 
-                pocisk = klasy.Pocisk()
-                pocisk2 = klasy.Pocisk()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    pocisk = klasy.Pocisk()
+                    pocisk2 = klasy.Pocisk()
 
-                pocisk.rect.x = player.rect.x
-                pocisk.rect.y = player.rect.y + 3
+                    pocisk.rect.x = player.rect.x
+                    pocisk.rect.y = player.rect.y + 3
 
-                pocisk2.rect.x = player.rect.x
-                pocisk2.rect.y = player.rect.y + 36
+                    pocisk2.rect.x = player.rect.x
+                    pocisk2.rect.y = player.rect.y + 36
 
-                all_spr.add(pocisk)
-                pociski.add(pocisk)
-                all_spr.add(pocisk2)
-                pociski.add(pocisk2)
+                    all_spr.add(pocisk)
+                    pociski.add(pocisk)
+                    all_spr.add(pocisk2)
+                    pociski.add(pocisk2)
+                    click_sound.play()
 
-                click_sound.play()
+        keys = pygame.key.get_pressed()  # checking pressed keys
+        velocity = 5
+        if keys[pygame.K_UP]:
+            player.rect.y -= velocity
+        if keys[pygame.K_DOWN]:
+            player.rect.y += velocity
+        if keys[pygame.K_LEFT]:
+            player.rect.x -= velocity
+        if keys[pygame.K_RIGHT]:
+            player.rect.x += velocity
+
+
+
+
+
 
 
         screen.fill(black)
@@ -139,15 +150,29 @@ def main():
                 score += 1
                 print(score)
 
-            if pocisk.rect.x > 805:
+            if pocisk.rect.x > screen_width+5:
                 pociski.remove(pocisk)
                 all_spr.remove(pocisk)
         #koniec hitboxow pociskow
 
+        #kolizja statku z granicami
+        
+        if player.rect.x == 0:
+            player.rect.x += 10
+        if player.rect.x == screen_width - 25:
+            player.rect.x -= 10
+        if player.rect.y == hud_height:
+            player.rect.y += 10
+        if player.rect.y >= screen_height - 39:
+            player.rect.y -= 10
+
+        #koniec granic
+
         all_spr.draw(screen)
+        player_group.draw(screen)
 
         #hud
-        hud_height = 58
+
         pygame.draw.rect(screen, hud, [0, 0, screen_width, hud_height])
 
         for i in range(zycia):
