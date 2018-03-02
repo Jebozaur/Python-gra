@@ -1,6 +1,6 @@
 def screen():
     sw = 1280
-    sh = 500
+    sh = 700
     return(sw,sh)
 def kolory():
     black = (0, 0, 0)

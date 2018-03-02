@@ -20,17 +20,15 @@ class Asteroid(pygame.sprite.Sprite):
         self.image.set_colorkey(black)
         self.rect = self.image.get_rect()
 
-        block_list.add(self)
-        all_spr.add(self)
+        self.rect.x = random.randrange(screen_width, screen_width + 500)
+        self.rect.y = random.randrange(0, screen_height)
 
     def update(self):
-        self.rect.x -= 1
+        self.rect.x -= 6
         if self.rect.x < -10:
-            self.rect.x = random.randrange(810, 820)
+            self.rect.x = random.randrange(screen_width, screen_width + 500)
 
     def coord(self):
-        self.rect.x = random.randrange(810, 1600)
-        self.rect.y = random.randrange(0, 605, 20)
         block_list.add(self)
         all_spr.add(self)
 

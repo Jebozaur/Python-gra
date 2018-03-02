@@ -15,16 +15,17 @@ player_group = pygame.sprite.Group()
 
 
 def main():
-    hud_height = 58
+    hud_height = 30
     zycia = 3
     pygame.init()
 
-
-
-    click_sound = pygame.mixer.Sound("strzal.ogg")
-    explode = pygame.mixer.Sound("wybuch.ogg")
+    click_sound = pygame.mixer.Sound("sounds\strzal.ogg")
+    explode = pygame.mixer.Sound("sounds\wybuch.ogg")
+    death_sound = pygame.mixer.Sound("sounds\death.ogg")
     explode.set_volume(0.1)
     click_sound.set_volume(0.2)
+    death_sound.set_volume(0.5)
+
     pygame.mouse.set_visible(False)
 
     #okno
@@ -40,23 +41,17 @@ def main():
 
 
    #ASTEROIDY
-    asteroid = klasy.Asteroid()
-    asteroid.rect.x = screen_width + 20
-    asteroid.rect.y = 20
-    block_list.add(asteroid)
-    all_spr.add(asteroid)
-
-    asteroidy = []
+    asteroid_array = []
     for i in range(50):
         asteroida = klasy.Asteroid()
-        asteroida.rect.x = asteroid.rect.x + 50
-        asteroida.rect.y = 20
         block_list.add(asteroida)
         all_spr.add(asteroida)
-        asteroidy.append(asteroida)
-        asteroid.rect.x += 40
+        asteroid_array.append(asteroida)
 
-    asteroidy[5].rect.y = 100
+    for i in range(50):
+        asteroid_array[i].rect.x = 10 * (i+1)
+        asteroid_array[i].rect.y = 500
+
 
     #KONIEC
 
@@ -104,7 +99,7 @@ def main():
                     click_sound.play()
 
         keys = pygame.key.get_pressed()  # checking pressed keys
-        velocity = 5
+        velocity = 10
         if keys[pygame.K_UP]:
             player.rect.y -= velocity
         if keys[pygame.K_DOWN]:
@@ -113,11 +108,6 @@ def main():
             player.rect.x -= velocity
         if keys[pygame.K_RIGHT]:
             player.rect.x += velocity
-
-
-
-
-
 
 
         screen.fill(black)
@@ -131,8 +121,8 @@ def main():
         all_spr.update()
 
         block_hit_list = pygame.sprite.spritecollide(player, block_list, True)
-        if asteroid.rect.x < 0:
-            asteroid.rect.x = random.randrange[screen_width + 10, screen_width + 820]
+        #if asteroid.rect.x < 0:
+        #asteroid.rect.x = random.randrange[screen_width + 10, screen_width + 820]
         for asteroid in block_hit_list:
             score += 1
             zycia -= 1
@@ -156,15 +146,15 @@ def main():
         #koniec hitboxow pociskow
 
         #kolizja statku z granicami
-        
+
         if player.rect.x == 0:
-            player.rect.x += 10
+            player.rect.x += velocity * 2
         if player.rect.x == screen_width - 25:
-            player.rect.x -= 10
-        if player.rect.y == hud_height:
-            player.rect.y += 10
+            player.rect.x -= velocity * 2
+        if player.rect.y <= hud_height:
+            player.rect.y += velocity * 2
         if player.rect.y >= screen_height - 39:
-            player.rect.y -= 10
+            player.rect.y -= velocity * 2
 
         #koniec granic
 
@@ -181,13 +171,22 @@ def main():
             screen.blit(serce3, [5 + (sercex * (zycia - 1)), 5])
 
         if score > 0:
-            punkty = pygame.font.SysFont("Fixedsys", 34)
+            punkty = pygame.font.SysFont("Fixedsys", 23)
             a_punkty = punkty.render("PUNKTY:", 1, black)
 
             licznik = punkty.render(str(score), 1, black)
 
             screen.blit(a_punkty, [540, 17])
             screen.blit(licznik, [650, 17])
+
+        if zycia == 0:
+            death_sound.play()
+
+        if zycia <= 0:
+            over = pygame.font.SysFont("Fixedsys", 100)
+            game_over = over.render("Przegrałeś", 1 , white)
+            screen.fill(black)
+            screen.blit(game_over, [screen_width / 2.5, screen_height / 2.5])
 
         pygame.display.flip()
 
