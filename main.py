@@ -42,16 +42,21 @@ def main():
 
    #ASTEROIDY
     asteroid_array = []
-    for i in range(50):
+    '''
+    for i in range(1):
         asteroida = klasy.Asteroid()
         block_list.add(asteroida)
         all_spr.add(asteroida)
         asteroid_array.append(asteroida)
+    '''
+    '''for i in range(1):
+        asteroid_array[i].rect.x = random.randrange(screen_width, screen_width + 500)
+        asteroid_array[i].rect.y = random.randrange(0, screen_height)
+'''
 
-    for i in range(50):
-        asteroid_array[i].rect.x = 10 * (i+1)
-        asteroid_array[i].rect.y = 500
-
+    asteroida = klasy.Asteroid(5)
+    block_list.add(asteroida)
+    all_spr.add(asteroida)
 
     #KONIEC
 
@@ -76,6 +81,7 @@ def main():
     score = 0
 #-------main loop-------#n
     while done:
+        clock.tick(60)
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
@@ -119,7 +125,7 @@ def main():
                 star[i][0] = random.randrange(screen_width + 10, screen_width + 20)
 
         all_spr.update()
-
+        asteroida.animateup()
         block_hit_list = pygame.sprite.spritecollide(player, block_list, True)
         #if asteroid.rect.x < 0:
         #asteroid.rect.x = random.randrange[screen_width + 10, screen_width + 820]
@@ -190,9 +196,8 @@ def main():
 
         pygame.display.flip()
 
-        clock.tick(60)
+
     pygame.quit()
 
 if __name__ == "__main__":
     main()
-
