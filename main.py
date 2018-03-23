@@ -2,6 +2,7 @@ import random
 import pygame
 import funkcje
 import klasy
+from time import sleep
 
 black,white,red,astr_c,green,hud = funkcje.kolory()
 
@@ -16,15 +17,20 @@ player_group = pygame.sprite.Group()
 
 def main():
     hud_height = 30
-    zycia = 3
+    zycia = 10
+    winsound = True
     pygame.init()
 
     click_sound = pygame.mixer.Sound("sounds\strzal.ogg")
     explode = pygame.mixer.Sound("sounds\wybuch.ogg")
     death_sound = pygame.mixer.Sound("sounds\death.ogg")
+    loss = pygame.mixer.Sound("sounds\loss.ogg")
+    win = pygame.mixer.Sound("sounds\win.ogg")
     explode.set_volume(0.1)
     click_sound.set_volume(0.2)
-    death_sound.set_volume(0.5)
+    death_sound.set_volume(1)
+    loss.set_volume(0.8)
+    win.set_volume(0.2)
 
     pygame.mouse.set_visible(False)
 
@@ -33,6 +39,9 @@ def main():
     screen = pygame.display.set_mode([screen_width, screen_height])
     pygame.display.set_caption("Gra")
     #koniec okna
+    '''serca = []
+    for i in zycia:
+        '''
     serce = pygame.image.load("serce.png").convert()
     serce2 = pygame.image.load("serce.png").convert()
     serce3 = pygame.image.load("serce.png").convert()
@@ -41,23 +50,27 @@ def main():
 
 
    #ASTEROIDY
-    asteroid_array = []
-    '''
-    for i in range(1):
-        asteroida = klasy.Asteroid()
-        block_list.add(asteroida)
-        all_spr.add(asteroida)
-        asteroid_array.append(asteroida)
+    asteroid_array = [klasy.Asteroid(5) for i in range(50)]
+
+    for i in range(50):
+        block_list.add(asteroid_array[i])
+        all_spr.add(asteroid_array[i])
+
+    '''for i in range(10):
+        asteroida + str(i) = klasy.Asteroid(5)
+        block_list.add(asteroida + str(i))
+        all_spr.add(asteroida + str(i))
+        asteroid_array.append(asteroida + str(i))
+
+
     '''
     '''for i in range(1):
-        asteroid_array[i].rect.x = random.randrange(screen_width, screen_width + 500)
-        asteroid_array[i].rect.y = random.randrange(0, screen_height)
-'''
-
+    asteroid_array[i].rect.x = random.randrange(screen_width, screen_width + 500)
+    asteroid_array[i].rect.y = random.randrange(0, screen_height)
+    
     asteroida = klasy.Asteroid(5)
     block_list.add(asteroida)
-    all_spr.add(asteroida)
-
+    '''
     #KONIEC
 
 #stworzenie gracza
@@ -123,17 +136,22 @@ def main():
             star[i][0] -= 1
             if star[i][0] < 0:
                 star[i][0] = random.randrange(screen_width + 10, screen_width + 20)
-
+        for i in range(25):
+            asteroid_array[i].animatedown()
+        for i in range(26, 50):
+            asteroid_array[i].animateup()
         all_spr.update()
-        asteroida.animateup()
+
         block_hit_list = pygame.sprite.spritecollide(player, block_list, True)
         #if asteroid.rect.x < 0:
         #asteroid.rect.x = random.randrange[screen_width + 10, screen_width + 820]
         for asteroid in block_hit_list:
             score += 1
             zycia -= 1
+            loss.play()
             print(score)
             explode.play()
+
         #hitboxy pociskow
         for pocisk in pociski:
 
@@ -194,7 +212,18 @@ def main():
             screen.fill(black)
             screen.blit(game_over, [screen_width / 2.5, screen_height / 2.5])
 
+
+        if score == 50:
+            over = pygame.font.SysFont("Fixedsys", 100)
+            game_over = over.render("Wygrałeś", 1, white)
+            screen.fill(black)
+            screen.blit(game_over, [screen_width / 2.5, screen_height / 2.5])
+            if winsound:
+                win.play()
+                winsound = False
+
         pygame.display.flip()
+
 
 
     pygame.quit()

@@ -20,18 +20,18 @@ class Asteroid(pygame.sprite.Sprite):
         self.image.set_colorkey(black)
         self.rect = self.image.get_rect()
 
-        self.rect.x = 1000
-        self.rect.y = random.randrange(0, screen_height)
+        self.rect.x = random.randrange(screen_width, screen_width + 2000, 100)
+        self.rect.y = random.randrange(0, screen_height, 75)
         self.speed = speed
 
     def update(self):
-        self.rect.x -= 6
+        self.rect.x -= self.speed
         if self.rect.x < -10:
-            self.rect.x = random.randrange(screen_width, screen_width + 500)
+            self.rect.x = random.randrange(screen_width, screen_width + 2000, 100)
     def animatedown(self):
        self.rect.y += self.speed
        if self.rect.y >= screen_height:
-           self.rect.y = -20
+           self.rect.y = random.randrange(-100,0)
     def animateup(self):
         self.rect.y -= self.speed
         if self.rect.y <= 0:
